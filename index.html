@@ -1,0 +1,182 @@
+
+<style>
+  .wg{font-family:-apple-system,BlinkMacSystemFont,sans-serif;color:var(--color-text-primary);}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:1.2rem;}
+  .dpill{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:9px 10px;cursor:pointer;text-align:center;}
+  .dpill.active{border:1.5px solid #D4537E;background:rgba(212,83,126,0.08);}
+  .dl{font-size:10px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px;}
+  .dpill.active .dl{color:#993556;}
+  .dn{font-size:12px;font-weight:500;line-height:1.3;color:var(--color-text-primary);}
+  .detail{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem 1.5rem;}
+  .dhead{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:1rem;}
+  .dtitle{font-size:18px;font-weight:500;color:var(--color-text-primary);}
+  .dfocus{font-size:13px;color:var(--color-text-secondary);margin-top:3px;}
+  .badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500;flex-shrink:0;margin-top:3px;}
+  .badge-gym{background:rgba(212,83,126,0.1);color:#993556;}
+  .badge-rest{background:var(--color-background-secondary);color:var(--color-text-secondary);}
+  .slabel{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-text-tertiary);padding:12px 0 7px;border-top:0.5px solid var(--color-border-tertiary);margin-top:4px;}
+  .slabel:first-of-type{border-top:none;margin-top:0;}
+  .exrow{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:start;padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary);}
+  .exrow:last-child{border-bottom:none;}
+  .exname{font-size:14px;color:var(--color-text-primary);line-height:1.35;}
+  .exsets{font-size:12px;color:var(--color-text-secondary);white-space:nowrap;padding-top:2px;}
+  .exload{font-size:13px;font-weight:500;text-align:right;white-space:nowrap;}
+  .load-pink{color:#D4537E;}
+  .load-gray{color:var(--color-text-secondary);}
+  .exnote{font-size:12px;color:var(--color-text-secondary);margin-top:5px;line-height:1.5;grid-column:1/-1;padding-top:5px;border-top:0.5px solid var(--color-border-tertiary);}
+  .notebox{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 14px;margin-top:12px;font-size:13px;color:var(--color-text-secondary);line-height:1.6;}
+  .progbox{background:rgba(212,83,126,0.07);border:0.5px solid rgba(212,83,126,0.2);border-radius:var(--border-radius-md);padding:10px 14px;margin-top:8px;font-size:13px;color:#993556;line-height:1.6;}
+  .wtabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+  .wtab{font-size:12px;padding:4px 11px;border:0.5px solid var(--color-border-secondary);border-radius:20px;background:transparent;color:var(--color-text-secondary);cursor:pointer;font-family:inherit;}
+  .wtab.active{background:var(--color-background-secondary);color:var(--color-text-primary);border-color:var(--color-border-primary);}
+</style>
+<h2 class="sr-only">Scheda allenamento personalizzata — 4 giorni, focus glutei, schiena e braccia</h2>
+<div class="wg" style="padding:0.5rem 0;">
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:1rem;">Seleziona un giorno per vedere gli esercizi, e la settimana per i carichi progressivi</p>
+  <div class="grid" id="dg"></div>
+  <div class="detail" id="dp"></div>
+</div>
+<script>
+const W=["Sett 1-2","Sett 3-4","Sett 5-6","Sett 7-8"];
+const D=[
+  {
+    label:"Lunedì",short:"Glutes A",type:"gym",badge:"Palestra",
+    focus:"Glutei · Femorali · ~75 min",
+    sections:[
+      {name:"Riscaldamento",exercises:[
+        {name:"Hip circle + glute bridge bodyweight",sets:"2×15",loads:["BW","BW","BW","BW"],ltype:"gray"},
+        {name:"Leg swing frontale e laterale",sets:"2×10/lato",loads:["—","—","—","—"],ltype:"gray"}
+      ]},
+      {name:"Esercizi principali",exercises:[
+        {name:"Hip thrust bilanciere",sets:"4×10",loads:["40kg","55kg","65kg","75kg"],ltype:"pink",note:"Scapole sulla panca, cuscinetto sul bacino. Spingi attraverso i talloni, contrai i glutei in cima 1 secondo."},
+        {name:"Romanian deadlift bilanciere",sets:"4×10",loads:["30kg","40kg","50kg","57.5kg"],ltype:"pink",note:"Schiena piatta, cerniera sull'anca. Scendi fino a sentire l'allungamento dei femorali, non oltre."}
+      ]},
+      {name:"Volume glutei",exercises:[
+        {name:"Leg press piedi alti e larghi",sets:"3×12",loads:["60kg","70kg","80kg","90kg"],ltype:"pink",note:"Piedi nella parte alta della piattaforma, larghi — attiva glutei invece dei quadricipiti."},
+        {name:"Abductor machine (apertura anche)",sets:"3×15",loads:["30kg","35kg","40kg","45kg"],ltype:"pink"},
+        {name:"Leg curl sdraiato",sets:"3×12",loads:["25kg","30kg","35kg","40kg"],ltype:"pink"}
+      ]},
+      {name:"Isolamento e finitura",exercises:[
+        {name:"Kickback al cavo basso (gluteo)",sets:"3×12/lato",loads:["10kg","12.5kg","15kg","17.5kg"],ltype:"pink"},
+        {name:"Calf raise in piedi",sets:"3×15",loads:["40kg","50kg","60kg","70kg"],ltype:"gray"}
+      ]}
+    ],
+    note:"Il hip thrust è l'esercizio più importante della settimana per i glutei. Le prime 2 settimane: impara il setup e senti la contrazione. Poi aggiungi peso.",
+    prog:"Obiettivo 2 mesi: hip thrust 80kg×10, RDL 60kg×10."
+  },
+  {
+    label:"Martedì",short:"Upper A",type:"gym",badge:"Palestra",
+    focus:"Schiena · Bicipiti · Rear delt · ~75 min",
+    sections:[
+      {name:"Riscaldamento",exercises:[
+        {name:"Arm circle + band pull-apart leggero",sets:"2×15",loads:["—","—","—","—"],ltype:"gray"},
+        {name:"Dead hang passivo alla sbarra",sets:"2×20s",loads:["BW","BW","BW","BW"],ltype:"gray"}
+      ]},
+      {name:"Schiena — forza",exercises:[
+        {name:"Lat machine presa larga",sets:"4×10",loads:["30kg","37.5kg","45kg","52.5kg"],ltype:"pink",note:"Busto leggermente indietro, tira verso la parte alta del petto. Pensa di portare i gomiti verso i fianchi."},
+        {name:"Rematore al cavo seduto presa stretta",sets:"4×10",loads:["25kg","32.5kg","40kg","47.5kg"],ltype:"pink",note:"Schiena dritta, non oscillare il busto. Tira verso l'ombelico, scapole indietro in fondo."}
+      ]},
+      {name:"Schiena — volume",exercises:[
+        {name:"Rematore con manubrio",sets:"3×10/lato",loads:["8kg/m","10kg/m","12kg/m","14kg/m"],ltype:"pink"},
+        {name:"Face pull al cavo con corda",sets:"3×15",loads:["10kg","12.5kg","15kg","17.5kg"],ltype:"pink",note:"Gomiti alti, rotazione esterna in fondo. Fondamentale per la salute delle spalle."}
+      ]},
+      {name:"Bicipiti",exercises:[
+        {name:"Curl bilanciere",sets:"3×10",loads:["10kg","12.5kg","15kg","17.5kg"],ltype:"pink"},
+        {name:"Curl manubri alternati",sets:"2×10/lato",loads:["6kg/m","7kg/m","8kg/m","9kg/m"],ltype:"pink"}
+      ]}
+    ],
+    note:"La schiena è già visibilmente sviluppata — priorità al volume e alla connessione mente-muscolo. Non usare slancio: ogni rep deve essere controllata.",
+    prog:"Obiettivo 2 mesi: lat machine 55kg×10, rematore cavo 50kg×10."
+  },
+  {
+    label:"Giovedì",short:"Glutes B",type:"gym",badge:"Palestra",
+    focus:"Glutei · Quadricipiti · Core · ~75 min",
+    sections:[
+      {name:"Riscaldamento",exercises:[
+        {name:"Goblet squat con kettlebell",sets:"3×10",loads:["8kg","10kg","12kg","14kg"],ltype:"gray"},
+        {name:"Hip circle + mobilità anca",sets:"2×10/lato",loads:["—","—","—","—"],ltype:"gray"}
+      ]},
+      {name:"Esercizi principali",exercises:[
+        {name:"Squat al multipower (Smith machine)",sets:"4×10",loads:["20kg","30kg","40kg","47.5kg"],ltype:"pink",note:"Piedi leggermente avanti rispetto alla barra. Scendi sotto il parallelo. Il multipower la aiuta sulla stabilità essendo principiante."},
+        {name:"Affondi con manubri",sets:"3×10/lato",loads:["6kg/m","8kg/m","10kg/m","12kg/m"],ltype:"pink",note:"Scendi verticalmente, ginocchio anteriore in linea con la punta del piede."}
+      ]},
+      {name:"Volume glutei e cosce",exercises:[
+        {name:"Leg press piedi alti e larghi",sets:"3×12",loads:["60kg","70kg","80kg","90kg"],ltype:"pink"},
+        {name:"Hip thrust al multipower",sets:"3×12",loads:["30kg","40kg","50kg","60kg"],ltype:"pink",note:"Variante più semplice del hip thrust con bilanciere. Stessa esecuzione."},
+        {name:"Leg extension",sets:"3×15",loads:["20kg","25kg","30kg","35kg"],ltype:"pink"}
+      ]},
+      {name:"Core",exercises:[
+        {name:"Plank frontale",sets:"3×30s",loads:["BW","BW","BW","BW"],ltype:"gray"},
+        {name:"Crunch al cavo",sets:"3×15",loads:["10kg","12.5kg","15kg","17.5kg"],ltype:"pink"}
+      ]}
+    ],
+    note:"Lo squat al multipower è la scelta giusta per una principiante — permette di imparare il pattern senza preoccuparsi dell'equilibrio. Quando la tecnica è solida si passa al bilanciere libero.",
+    prog:"Obiettivo 2 mesi: squat multipower 50kg×10, affondi 14kg/m×10."
+  },
+  {
+    label:"Venerdì",short:"Upper B",type:"gym",badge:"Palestra",
+    focus:"Spalle · Tricipiti · Addominali · ~70 min",
+    sections:[
+      {name:"Riscaldamento",exercises:[
+        {name:"Rotazioni spalle + band pull-apart",sets:"2×15",loads:["—","—","—","—"],ltype:"gray"},
+        {name:"Alzate laterali leggere",sets:"2×15",loads:["2kg/m","2kg/m","2kg/m","2kg/m"],ltype:"gray"}
+      ]},
+      {name:"Spalle",exercises:[
+        {name:"Shoulder press con manubri (seduta)",sets:"4×10",loads:["6kg/m","8kg/m","10kg/m","12kg/m"],ltype:"pink",note:"Schiena appoggiata allo schienale, core braced. Spingi verso l'alto senza inarcare la schiena."},
+        {name:"Alzate laterali cavi",sets:"3×15",loads:["4kg","5kg","6kg","7kg"],ltype:"pink",note:"Movimento lento e controllato. L'eccentrica (discesa) è la parte più importante."},
+        {name:"Alzate frontali manubri",sets:"3×12",loads:["4kg/m","5kg/m","6kg/m","7kg/m"],ltype:"pink"}
+      ]},
+      {name:"Tricipiti",exercises:[
+        {name:"Pushdown al cavo con corda",sets:"3×12",loads:["12kg","15kg","17.5kg","20kg"],ltype:"pink",note:"Gomiti incollati ai fianchi. Estensione completa in fondo, rotazione polsi verso l'esterno."},
+        {name:"Skull crusher con manubri",sets:"3×10",loads:["4kg/m","5kg/m","6kg/m","7kg/m"],ltype:"pink",note:"Sdraiata, abbassa i manubri verso le orecchie piegando i gomiti. Mantieni i gomiti fermi."}
+      ]},
+      {name:"Addominali",exercises:[
+        {name:"Hollow body hold",sets:"3×25s",loads:["BW","BW","BW","BW"],ltype:"gray",note:"Lombare incollata al suolo, gambe tese a 20-30cm da terra. Se la schiena si alza, piega le ginocchia."},
+        {name:"Leg raise sdraiata",sets:"3×12",loads:["BW","BW","BW","BW"],ltype:"gray"},
+        {name:"Plank laterale",sets:"2×25s/lato",loads:["BW","BW","BW","BW"],ltype:"gray"}
+      ]}
+    ],
+    note:"Le spalle sono una zona che risponde bene al volume e alle ripetizioni moderate. Non mettere carichi enormi — la forma è tutto, specialmente per le alzate laterali.",
+    prog:"Obiettivo 2 mesi: shoulder press 14kg/m×10, pushdown 22.5kg×12."
+  }
+];
+
+let sd=0,sw=0;
+
+function renderGrid(){
+  document.getElementById('dg').innerHTML=D.map((d,i)=>`
+    <div class="dpill ${i===sd?'active':''}" onclick="sel(${i})">
+      <div class="dl">${d.label}</div>
+      <div class="dn">${d.short}</div>
+    </div>`).join('');
+}
+
+function renderDetail(){
+  const d=D[sd],w=sw;
+  let h=`<div class="dhead"><div><div class="dtitle">${d.label} — ${d.short}</div><div class="dfocus">${d.focus}</div></div><span class="badge badge-gym">${d.badge}</span></div>`;
+  h+=`<div class="wtabs">${W.map((wk,i)=>`<button class="wtab ${i===w?'active':''}" onclick="selW(${i})">${wk}</button>`).join('')}</div>`;
+  h+=`<div style="display:grid;grid-template-columns:1fr auto auto;gap:8px;padding:4px 0 7px;border-bottom:0.5px solid var(--color-border-tertiary);">
+    <span style="font-size:11px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Esercizio</span>
+    <span style="font-size:11px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Serie×Reps</span>
+    <span style="font-size:11px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:0.05em;text-align:right;">Carico</span>
+  </div>`;
+  d.sections.forEach(s=>{
+    h+=`<div class="slabel">${s.name}</div>`;
+    s.exercises.forEach(e=>{
+      h+=`<div class="exrow">
+        <div class="exname">${e.name}</div>
+        <div class="exsets">${e.sets}</div>
+        <div class="exload ${e.ltype==='pink'?'load-pink':'load-gray'}">${e.loads[w]}</div>
+        ${e.note?`<div class="exnote">${e.note}</div>`:''}
+      </div>`;
+    });
+  });
+  if(d.note)h+=`<div class="notebox">${d.note}</div>`;
+  if(d.prog)h+=`<div class="progbox">${d.prog}</div>`;
+  document.getElementById('dp').innerHTML=h;
+}
+
+function sel(i){sd=i;renderGrid();renderDetail();}
+function selW(i){sw=i;renderDetail();}
+renderGrid();renderDetail();
+</script>
