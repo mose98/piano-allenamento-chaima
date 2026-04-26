@@ -1,182 +1,288 @@
-
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Scheda Allenamento</title>
 <style>
-  .wg{font-family:-apple-system,BlinkMacSystemFont,sans-serif;color:var(--color-text-primary);}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:1.2rem;}
-  .dpill{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:9px 10px;cursor:pointer;text-align:center;}
-  .dpill.active{border:1.5px solid #D4537E;background:rgba(212,83,126,0.08);}
-  .dl{font-size:10px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px;}
-  .dpill.active .dl{color:#993556;}
-  .dn{font-size:12px;font-weight:500;line-height:1.3;color:var(--color-text-primary);}
-  .detail{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem 1.5rem;}
-  .dhead{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:1rem;}
-  .dtitle{font-size:18px;font-weight:500;color:var(--color-text-primary);}
-  .dfocus{font-size:13px;color:var(--color-text-secondary);margin-top:3px;}
-  .badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500;flex-shrink:0;margin-top:3px;}
-  .badge-gym{background:rgba(212,83,126,0.1);color:#993556;}
-  .badge-rest{background:var(--color-background-secondary);color:var(--color-text-secondary);}
-  .slabel{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-text-tertiary);padding:12px 0 7px;border-top:0.5px solid var(--color-border-tertiary);margin-top:4px;}
-  .slabel:first-of-type{border-top:none;margin-top:0;}
-  .exrow{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:start;padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary);}
-  .exrow:last-child{border-bottom:none;}
-  .exname{font-size:14px;color:var(--color-text-primary);line-height:1.35;}
-  .exsets{font-size:12px;color:var(--color-text-secondary);white-space:nowrap;padding-top:2px;}
-  .exload{font-size:13px;font-weight:500;text-align:right;white-space:nowrap;}
-  .load-pink{color:#D4537E;}
-  .load-gray{color:var(--color-text-secondary);}
-  .exnote{font-size:12px;color:var(--color-text-secondary);margin-top:5px;line-height:1.5;grid-column:1/-1;padding-top:5px;border-top:0.5px solid var(--color-border-tertiary);}
-  .notebox{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 14px;margin-top:12px;font-size:13px;color:var(--color-text-secondary);line-height:1.6;}
-  .progbox{background:rgba(212,83,126,0.07);border:0.5px solid rgba(212,83,126,0.2);border-radius:var(--border-radius-md);padding:10px 14px;margin-top:8px;font-size:13px;color:#993556;line-height:1.6;}
-  .wtabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
-  .wtab{font-size:12px;padding:4px 11px;border:0.5px solid var(--color-border-secondary);border-radius:20px;background:transparent;color:var(--color-text-secondary);cursor:pointer;font-family:inherit;}
-  .wtab.active{background:var(--color-background-secondary);color:var(--color-text-primary);border-color:var(--color-border-primary);}
+  :root{--bg:#0f0f0f;--bg2:#1a1a1a;--bg3:#242424;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--text:#f0f0f0;--text2:#888;--text3:#444;--pink:#f472b6;--pink-bg:rgba(244,114,182,0.1);--pink-border:rgba(244,114,182,0.2);--red:#f87171;--red-bg:rgba(248,113,113,0.1);}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);max-width:480px;margin:0 auto;padding-bottom:80px;}
+  .nav{display:flex;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg);z-index:30;}
+  .nav-tab{flex:1;padding:14px 8px;font-size:13px;font-weight:600;color:var(--text2);text-align:center;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.15s;}
+  .nav-tab.active{color:var(--pink);border-bottom-color:var(--pink);}
+  .page{display:none;}.page.active{display:block;}
+  .top-bar{padding:16px 16px 12px;border-bottom:1px solid var(--border);position:sticky;top:49px;background:var(--bg);z-index:20;}
+  .top-bar h1{font-size:19px;font-weight:700;letter-spacing:-0.4px;}
+  .top-bar p{font-size:12px;color:var(--text2);margin-top:2px;}
+  .week-row{display:flex;gap:6px;padding:10px 16px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--border);position:sticky;top:97px;background:var(--bg);z-index:19;}
+  .week-row::-webkit-scrollbar{display:none;}
+  .wtab{flex-shrink:0;font-size:12px;padding:5px 12px;border-radius:20px;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;}
+  .wtab.active{background:var(--pink);color:#0a0a0a;border-color:var(--pink);font-weight:600;}
+  .day-row{display:flex;gap:7px;padding:10px 16px;overflow-x:auto;scrollbar-width:none;}
+  .day-row::-webkit-scrollbar{display:none;}
+  .dpill{flex-shrink:0;min-width:62px;padding:7px 8px;border-radius:10px;border:1px solid var(--border);background:var(--bg2);cursor:pointer;text-align:center;position:relative;}
+  .dpill.active{border-color:var(--pink);background:var(--pink-bg);}
+  .dpill .dl{font-size:10px;color:var(--text2);margin-bottom:2px;text-transform:uppercase;letter-spacing:0.05em;}
+  .dpill.active .dl{color:var(--pink);}
+  .dpill .dn{font-size:11px;font-weight:500;line-height:1.2;}
+  .dpill .done-dot{position:absolute;top:4px;right:4px;width:6px;height:6px;border-radius:50%;background:var(--pink);}
+  .content{padding:0 16px;}
+  .day-hdr{padding:14px 0 12px;border-bottom:1px solid var(--border);margin-bottom:4px;}
+  .day-hdr-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+  .day-hdr h2{font-size:18px;font-weight:700;letter-spacing:-0.3px;line-height:1.2;}
+  .day-hdr .focus{font-size:12px;color:var(--text2);margin-top:3px;}
+  .tbadge{flex-shrink:0;font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600;margin-top:3px;background:var(--pink-bg);color:var(--pink);}
+  .slabel{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);padding:13px 0 7px;}
+  .ex-card{background:var(--bg2);border:1px solid var(--border);border-radius:11px;padding:11px 13px;margin-bottom:7px;transition:border-color 0.15s,background 0.15s;}
+  .ex-card.completed{border-color:var(--pink-border);background:rgba(244,114,182,0.04);}
+  .ex-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+  .ex-name-btn{background:none;border:none;font-family:inherit;font-size:14px;font-weight:500;color:var(--text);text-align:left;cursor:pointer;flex:1;line-height:1.3;padding:0;display:flex;align-items:flex-start;gap:6px;}
+  .info-dot{flex-shrink:0;width:16px;height:16px;border-radius:50%;background:var(--bg3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--text2);margin-top:1px;}
+  .ex-right{display:flex;align-items:flex-start;gap:10px;flex-shrink:0;}
+  .ex-sets{font-size:12px;color:var(--text2);white-space:nowrap;padding-top:2px;}
+  .check-btn{width:26px;height:26px;border-radius:7px;border:1px solid var(--border2);background:var(--bg3);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s;margin-top:-1px;}
+  .check-btn.done{background:var(--pink-bg);border-color:var(--pink);}
+  .check-btn svg{width:13px;height:13px;}
+  .loads-row{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;}
+  .lchip{font-size:11px;padding:3px 7px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);white-space:nowrap;}
+  .lchip span{font-size:10px;color:var(--text3);margin-right:2px;}
+  .lchip.pink{border-color:var(--pink-border);color:var(--pink);background:var(--pink-bg);}
+  .lchip.active-week{border-width:1.5px;font-weight:600;}
+  .ex-note-inline{font-size:12px;color:var(--text2);margin-top:7px;line-height:1.5;padding-top:7px;border-top:1px solid var(--border);}
+  .note-box{background:var(--bg3);border-radius:10px;padding:11px 13px;margin-top:10px;font-size:13px;color:var(--text2);line-height:1.6;}
+  .prog-box{background:var(--pink-bg);border:1px solid var(--pink-border);border-radius:10px;padding:11px 13px;margin-top:7px;font-size:13px;color:var(--pink);line-height:1.6;}
+  .save-btn{width:100%;margin-top:16px;margin-bottom:8px;padding:13px;background:var(--bg3);border:1px solid var(--border2);border-radius:12px;font-family:inherit;font-size:14px;font-weight:600;color:var(--text2);cursor:pointer;transition:all 0.15s;}
+  .save-btn.ready{background:var(--pink-bg);border-color:var(--pink-border);color:var(--pink);}
+  .history-content{padding:16px;}
+  .history-empty{text-align:center;padding:60px 20px;color:var(--text2);font-size:14px;line-height:1.6;}
+  .hist-session{background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:12px;overflow:hidden;}
+  .hist-session-hdr{padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:8px;}
+  .hist-session-hdr-left{flex:1;cursor:pointer;}
+  .hist-session-title{font-size:14px;font-weight:600;}
+  .hist-session-date{font-size:12px;color:var(--text2);margin-top:2px;}
+  .hist-session-body{padding:0 14px 12px;display:none;}
+  .hist-session-body.open{display:block;}
+  .hist-ex{padding:7px 0;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+  .hist-ex-name{font-size:13px;color:var(--text);}
+  .hist-ex-status{font-size:11px;padding:2px 8px;border-radius:5px;background:var(--pink-bg);color:var(--pink);}
+  .hist-arrow{color:var(--text2);font-size:18px;cursor:pointer;flex-shrink:0;}
+  .del-session-btn{padding:4px 10px;border-radius:7px;border:1px solid rgba(248,113,113,0.25);background:var(--red-bg);color:var(--red);font-family:inherit;font-size:12px;cursor:pointer;flex-shrink:0;}
+  .clear-all-btn{display:block;width:100%;margin-top:8px;padding:11px;background:transparent;border:1px solid var(--border2);border-radius:10px;font-family:inherit;font-size:13px;color:var(--text3);cursor:pointer;text-align:center;}
+  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:center;justify-content:center;padding:24px;}
+  .overlay.open{display:flex;}
+  .confirm-box{background:var(--bg2);border:1px solid var(--border2);border-radius:16px;padding:24px 20px;width:100%;max-width:340px;}
+  .confirm-title{font-size:16px;font-weight:700;margin-bottom:6px;}
+  .confirm-sub{font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:20px;}
+  .confirm-actions{display:flex;gap:10px;}
+  .confirm-cancel{flex:1;padding:11px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;font-family:inherit;font-size:14px;font-weight:600;color:var(--text2);cursor:pointer;}
+  .confirm-ok{flex:1;padding:11px;background:var(--pink-bg);border:1px solid var(--pink-border);border-radius:10px;font-family:inherit;font-size:14px;font-weight:600;color:var(--pink);cursor:pointer;}
+  .confirm-del{flex:1;padding:11px;background:var(--red-bg);border:1px solid rgba(248,113,113,0.25);border-radius:10px;font-family:inherit;font-size:14px;font-weight:600;color:var(--red);cursor:pointer;}
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:100;align-items:flex-end;justify-content:center;}
+  .modal-overlay.open{display:flex;}
+  .modal{background:var(--bg2);border-radius:20px 20px 0 0;padding:0 0 40px;width:100%;max-width:480px;max-height:88vh;overflow-y:auto;}
+  .modal-handle{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:12px auto 0;}
+  .modal-hdr{padding:16px 20px 14px;border-bottom:1px solid var(--border);}
+  .modal-hdr h3{font-size:17px;font-weight:700;letter-spacing:-0.3px;line-height:1.3;}
+  .modal-muscles{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+  .muscle-tag{font-size:11px;padding:3px 9px;border-radius:20px;}
+  .muscle-primary{background:var(--pink-bg);color:var(--pink);}
+  .muscle-secondary{background:var(--bg3);color:var(--text2);}
+  .modal-body{padding:16px 20px;}
+  .modal-section{margin-bottom:18px;}
+  .modal-section-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:10px;}
+  .step-list{display:flex;flex-direction:column;gap:8px;}
+  .step-item{display:flex;gap:10px;align-items:flex-start;}
+  .step-num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--bg3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--text2);}
+  .step-text{font-size:14px;color:var(--text);line-height:1.5;padding-top:2px;}
+  .error-list{display:flex;flex-direction:column;gap:7px;}
+  .error-item{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--text2);line-height:1.5;}
+  .error-dot{flex-shrink:0;width:6px;height:6px;border-radius:50%;background:var(--red);margin-top:6px;}
+  .modal-close{display:block;margin:4px 20px 0;padding:13px;background:var(--bg3);border:1px solid var(--border2);border-radius:12px;font-family:inherit;font-size:14px;font-weight:600;color:var(--text);cursor:pointer;width:calc(100% - 40px);text-align:center;}
 </style>
-<h2 class="sr-only">Scheda allenamento personalizzata — 4 giorni, focus glutei, schiena e braccia</h2>
-<div class="wg" style="padding:0.5rem 0;">
-  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:1rem;">Seleziona un giorno per vedere gli esercizi, e la settimana per i carichi progressivi</p>
-  <div class="grid" id="dg"></div>
-  <div class="detail" id="dp"></div>
+</head>
+<body>
+<div class="nav">
+  <div class="nav-tab active" onclick="showPage('scheda')">Scheda</div>
+  <div class="nav-tab" onclick="showPage('tracker')">Tracker</div>
+  <div class="nav-tab" onclick="showPage('history')">Storico</div>
+</div>
+<div class="page active" id="page-scheda">
+  <div class="top-bar"><h1>Scheda Allenamento</h1><p>Glutei · Schiena · Spalle · Braccia</p></div>
+  <div class="week-row" id="weekRow"></div>
+  <div class="day-row" id="dayRow"></div>
+  <div class="content" id="content"></div>
+</div>
+<div class="page" id="page-tracker">
+  <div class="top-bar"><h1>Tracker</h1><p id="tracker-subtitle">Seleziona giorno e settimana dalla Scheda</p></div>
+  <div class="content" id="tracker-content" style="padding-top:12px;"></div>
+</div>
+<div class="page" id="page-history">
+  <div class="top-bar"><h1>Storico</h1><p>Le tue sessioni salvate</p></div>
+  <div class="history-content" id="history-content"></div>
+</div>
+<div class="overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="confirm-title" id="confirmTitle"></div>
+    <div class="confirm-sub" id="confirmSub"></div>
+    <div class="confirm-actions">
+      <button class="confirm-cancel" id="confirmCancel">Annulla</button>
+      <button class="confirm-ok" id="confirmOk">Conferma</button>
+    </div>
+  </div>
+</div>
+<div class="overlay" id="deleteOverlay">
+  <div class="confirm-box">
+    <div class="confirm-title">Rimuovi sessione</div>
+    <div class="confirm-sub">Vuoi rimuovere questa sessione dallo storico? L'azione non è reversibile.</div>
+    <div class="confirm-actions">
+      <button class="confirm-cancel" onclick="closeDeleteOverlay()">Annulla</button>
+      <button class="confirm-del" id="deleteOk">Rimuovi</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-hdr"><h3 id="modalTitle"></h3><div class="modal-muscles" id="modalMuscles"></div></div>
+    <div class="modal-body" id="modalBody"></div>
+    <button class="modal-close" onclick="closeModalDirect()">Chiudi</button>
+  </div>
 </div>
 <script>
-const W=["Sett 1-2","Sett 3-4","Sett 5-6","Sett 7-8"];
-const D=[
-  {
-    label:"Lunedì",short:"Glutes A",type:"gym",badge:"Palestra",
-    focus:"Glutei · Femorali · ~75 min",
-    sections:[
-      {name:"Riscaldamento",exercises:[
-        {name:"Hip circle + glute bridge bodyweight",sets:"2×15",loads:["BW","BW","BW","BW"],ltype:"gray"},
-        {name:"Leg swing frontale e laterale",sets:"2×10/lato",loads:["—","—","—","—"],ltype:"gray"}
-      ]},
-      {name:"Esercizi principali",exercises:[
-        {name:"Hip thrust bilanciere",sets:"4×10",loads:["40kg","55kg","65kg","75kg"],ltype:"pink",note:"Scapole sulla panca, cuscinetto sul bacino. Spingi attraverso i talloni, contrai i glutei in cima 1 secondo."},
-        {name:"Romanian deadlift bilanciere",sets:"4×10",loads:["30kg","40kg","50kg","57.5kg"],ltype:"pink",note:"Schiena piatta, cerniera sull'anca. Scendi fino a sentire l'allungamento dei femorali, non oltre."}
-      ]},
-      {name:"Volume glutei",exercises:[
-        {name:"Leg press piedi alti e larghi",sets:"3×12",loads:["60kg","70kg","80kg","90kg"],ltype:"pink",note:"Piedi nella parte alta della piattaforma, larghi — attiva glutei invece dei quadricipiti."},
-        {name:"Abductor machine (apertura anche)",sets:"3×15",loads:["30kg","35kg","40kg","45kg"],ltype:"pink"},
-        {name:"Leg curl sdraiato",sets:"3×12",loads:["25kg","30kg","35kg","40kg"],ltype:"pink"}
-      ]},
-      {name:"Isolamento e finitura",exercises:[
-        {name:"Kickback al cavo basso (gluteo)",sets:"3×12/lato",loads:["10kg","12.5kg","15kg","17.5kg"],ltype:"pink"},
-        {name:"Calf raise in piedi",sets:"3×15",loads:["40kg","50kg","60kg","70kg"],ltype:"gray"}
-      ]}
-    ],
-    note:"Il hip thrust è l'esercizio più importante della settimana per i glutei. Le prime 2 settimane: impara il setup e senti la contrazione. Poi aggiungi peso.",
-    prog:"Obiettivo 2 mesi: hip thrust 80kg×10, RDL 60kg×10."
-  },
-  {
-    label:"Martedì",short:"Upper A",type:"gym",badge:"Palestra",
-    focus:"Schiena · Bicipiti · Rear delt · ~75 min",
-    sections:[
-      {name:"Riscaldamento",exercises:[
-        {name:"Arm circle + band pull-apart leggero",sets:"2×15",loads:["—","—","—","—"],ltype:"gray"},
-        {name:"Dead hang passivo alla sbarra",sets:"2×20s",loads:["BW","BW","BW","BW"],ltype:"gray"}
-      ]},
-      {name:"Schiena — forza",exercises:[
-        {name:"Lat machine presa larga",sets:"4×10",loads:["30kg","37.5kg","45kg","52.5kg"],ltype:"pink",note:"Busto leggermente indietro, tira verso la parte alta del petto. Pensa di portare i gomiti verso i fianchi."},
-        {name:"Rematore al cavo seduto presa stretta",sets:"4×10",loads:["25kg","32.5kg","40kg","47.5kg"],ltype:"pink",note:"Schiena dritta, non oscillare il busto. Tira verso l'ombelico, scapole indietro in fondo."}
-      ]},
-      {name:"Schiena — volume",exercises:[
-        {name:"Rematore con manubrio",sets:"3×10/lato",loads:["8kg/m","10kg/m","12kg/m","14kg/m"],ltype:"pink"},
-        {name:"Face pull al cavo con corda",sets:"3×15",loads:["10kg","12.5kg","15kg","17.5kg"],ltype:"pink",note:"Gomiti alti, rotazione esterna in fondo. Fondamentale per la salute delle spalle."}
-      ]},
-      {name:"Bicipiti",exercises:[
-        {name:"Curl bilanciere",sets:"3×10",loads:["10kg","12.5kg","15kg","17.5kg"],ltype:"pink"},
-        {name:"Curl manubri alternati",sets:"2×10/lato",loads:["6kg/m","7kg/m","8kg/m","9kg/m"],ltype:"pink"}
-      ]}
-    ],
-    note:"La schiena è già visibilmente sviluppata — priorità al volume e alla connessione mente-muscolo. Non usare slancio: ogni rep deve essere controllata.",
-    prog:"Obiettivo 2 mesi: lat machine 55kg×10, rematore cavo 50kg×10."
-  },
-  {
-    label:"Giovedì",short:"Glutes B",type:"gym",badge:"Palestra",
-    focus:"Glutei · Quadricipiti · Core · ~75 min",
-    sections:[
-      {name:"Riscaldamento",exercises:[
-        {name:"Goblet squat con kettlebell",sets:"3×10",loads:["8kg","10kg","12kg","14kg"],ltype:"gray"},
-        {name:"Hip circle + mobilità anca",sets:"2×10/lato",loads:["—","—","—","—"],ltype:"gray"}
-      ]},
-      {name:"Esercizi principali",exercises:[
-        {name:"Squat al multipower (Smith machine)",sets:"4×10",loads:["20kg","30kg","40kg","47.5kg"],ltype:"pink",note:"Piedi leggermente avanti rispetto alla barra. Scendi sotto il parallelo. Il multipower la aiuta sulla stabilità essendo principiante."},
-        {name:"Affondi con manubri",sets:"3×10/lato",loads:["6kg/m","8kg/m","10kg/m","12kg/m"],ltype:"pink",note:"Scendi verticalmente, ginocchio anteriore in linea con la punta del piede."}
-      ]},
-      {name:"Volume glutei e cosce",exercises:[
-        {name:"Leg press piedi alti e larghi",sets:"3×12",loads:["60kg","70kg","80kg","90kg"],ltype:"pink"},
-        {name:"Hip thrust al multipower",sets:"3×12",loads:["30kg","40kg","50kg","60kg"],ltype:"pink",note:"Variante più semplice del hip thrust con bilanciere. Stessa esecuzione."},
-        {name:"Leg extension",sets:"3×15",loads:["20kg","25kg","30kg","35kg"],ltype:"pink"}
-      ]},
-      {name:"Core",exercises:[
-        {name:"Plank frontale",sets:"3×30s",loads:["BW","BW","BW","BW"],ltype:"gray"},
-        {name:"Crunch al cavo",sets:"3×15",loads:["10kg","12.5kg","15kg","17.5kg"],ltype:"pink"}
-      ]}
-    ],
-    note:"Lo squat al multipower è la scelta giusta per una principiante — permette di imparare il pattern senza preoccuparsi dell'equilibrio. Quando la tecnica è solida si passa al bilanciere libero.",
-    prog:"Obiettivo 2 mesi: squat multipower 50kg×10, affondi 14kg/m×10."
-  },
-  {
-    label:"Venerdì",short:"Upper B",type:"gym",badge:"Palestra",
-    focus:"Spalle · Tricipiti · Addominali · ~70 min",
-    sections:[
-      {name:"Riscaldamento",exercises:[
-        {name:"Rotazioni spalle + band pull-apart",sets:"2×15",loads:["—","—","—","—"],ltype:"gray"},
-        {name:"Alzate laterali leggere",sets:"2×15",loads:["2kg/m","2kg/m","2kg/m","2kg/m"],ltype:"gray"}
-      ]},
-      {name:"Spalle",exercises:[
-        {name:"Shoulder press con manubri (seduta)",sets:"4×10",loads:["6kg/m","8kg/m","10kg/m","12kg/m"],ltype:"pink",note:"Schiena appoggiata allo schienale, core braced. Spingi verso l'alto senza inarcare la schiena."},
-        {name:"Alzate laterali cavi",sets:"3×15",loads:["4kg","5kg","6kg","7kg"],ltype:"pink",note:"Movimento lento e controllato. L'eccentrica (discesa) è la parte più importante."},
-        {name:"Alzate frontali manubri",sets:"3×12",loads:["4kg/m","5kg/m","6kg/m","7kg/m"],ltype:"pink"}
-      ]},
-      {name:"Tricipiti",exercises:[
-        {name:"Pushdown al cavo con corda",sets:"3×12",loads:["12kg","15kg","17.5kg","20kg"],ltype:"pink",note:"Gomiti incollati ai fianchi. Estensione completa in fondo, rotazione polsi verso l'esterno."},
-        {name:"Skull crusher con manubri",sets:"3×10",loads:["4kg/m","5kg/m","6kg/m","7kg/m"],ltype:"pink",note:"Sdraiata, abbassa i manubri verso le orecchie piegando i gomiti. Mantieni i gomiti fermi."}
-      ]},
-      {name:"Addominali",exercises:[
-        {name:"Hollow body hold",sets:"3×25s",loads:["BW","BW","BW","BW"],ltype:"gray",note:"Lombare incollata al suolo, gambe tese a 20-30cm da terra. Se la schiena si alza, piega le ginocchia."},
-        {name:"Leg raise sdraiata",sets:"3×12",loads:["BW","BW","BW","BW"],ltype:"gray"},
-        {name:"Plank laterale",sets:"2×25s/lato",loads:["BW","BW","BW","BW"],ltype:"gray"}
-      ]}
-    ],
-    note:"Le spalle sono una zona che risponde bene al volume e alle ripetizioni moderate. Non mettere carichi enormi — la forma è tutto, specialmente per le alzate laterali.",
-    prog:"Obiettivo 2 mesi: shoulder press 14kg/m×10, pushdown 22.5kg×12."
-  }
+const EI={"Hip circle + glute bridge bodyweight":{muscles:["Glutei","Mobilità anca"],secondary:["Core"],steps:["Rotazioni circolari dell'anca appoggiandoti a una parete — 10 avanti, 10 indietro per lato","Poi sdraiati, ginocchia piegate, piedi a terra larghezza spalle","Spingi i talloni a terra sollevando i fianchi fino a una linea retta","Contrai i glutei in cima 1 secondo, scendi controllata"],errors:["Non iperestendere la schiena in cima — il movimento viene dai glutei","Non rimbalzare — ogni rep è controllata"]},"Hip thrust bilanciere":{muscles:["Gluteo grande","Femorali"],secondary:["Core","Quadricipiti"],steps:["Schiena appoggiata alla panca (scapole sulla panca), bilanciere sul bacino con cuscinetto","Piedi a terra larghezza spalle, ginocchia a circa 90° quando sei in cima","Spingi attraverso i talloni portando i fianchi su — linea retta da spalle a ginocchia","Contrai i glutei massimamente in cima — tieni 1 secondo, poi scendi controllata"],errors:["Non iperestendere la zona lombare in cima — glutei, non schiena","Non far collassare le ginocchia verso l'interno","Piedi né troppo vicini né troppo lontani — trova la posizione dove senti i glutei"]},"Romanian deadlift bilanciere":{muscles:["Femorali","Glutei"],secondary:["Erettori","Core"],steps:["In piedi, bilanciere davanti alle cosce con presa prona, schiena piatta","Inclina il busto in avanti con la cerniera sull'anca — ginocchia leggermente flesse ma ferme","Scendi finché senti l'allungamento forte dei femorali (circa metà tibia) — non oltre","Risali contraendo femorali e glutei, non la schiena"],errors:["Non arrotondare la schiena — specialmente nella fase bassa","Non flettere le ginocchia durante la discesa — rimangono quasi ferme","La schiena piatta è prioritaria rispetto alla profondità"]},"Leg press piedi alti e larghi":{muscles:["Glutei","Femorali"],secondary:["Quadricipiti"],steps:["Piedi nella parte alta della piattaforma, larghi e con punte verso l'esterno","Schiena e testa appoggiate completamente allo schienale","Scendi fino a quando le cosce sono circa parallele alla piattaforma","Spingi attraverso i talloni — questa posizione attiva i glutei invece dei quadricipiti"],errors:["Non staccare i glutei dallo schienale in fondo","Non collassare le ginocchia verso l'interno","Non mettere i piedi nella posizione standard bassa — perdi il vantaggio"]},"Abductor machine (apertura anche)":{muscles:["Gluteo medio","Gluteo minore"],secondary:["Tensore fascia lata"],steps:["Seduta sulla macchina, schiena appoggiata, gambe nei supporti","Apri le gambe verso l'esterno il più possibile in modo controllato","Tieni 1 secondo in apertura massima — senti la contrazione sul lato del gluteo","Richiudi lentamente — non lasciare andare di colpo"],errors:["Non usare slancio — movimento lento e controllato in entrambe le direzioni","Non inclinare il busto durante il movimento","L'eccentrica (chiusura) è importante quanto l'apertura"]},"Leg curl sdraiato":{muscles:["Bicipite femorale","Semitendinoso","Semimembranoso"],secondary:["Gastrocnemio"],steps:["Sdraiata a pancia in giù, talloni sotto i cuscinetti della macchina","Fletti le ginocchia portando i talloni verso i glutei — ROM completo","Breve pausa in cima","Scendi lentamente — non lasciare cadere il peso"],errors:["Non sollevare i fianchi durante il movimento","Non usare slancio o rimbalzo nella posizione bassa"]},"Kickback al cavo basso (gluteo)":{muscles:["Gluteo grande"],secondary:["Femorali","Core"],steps:["Cavigliera al cavo basso. Appoggiati alla macchina con le mani, busto leggermente in avanti","Mantieni il core attivo, la schiena piatta durante tutto il movimento","Porta la gamba indietro e su — non oltre il livello del bacino","Contrai il gluteo in cima, ritorna lentamente"],errors:["Non inarcare la schiena per compensare — il movimento viene solo dal gluteo","Non usare slancio — movimento lento e isolato"]},"Calf raise in piedi":{muscles:["Gastrocnemio"],secondary:["Soleo"],steps:["Piedi sulla piattaforma, talloni nel vuoto — ROM completo fondamentale","Scendi al massimo allungamento — 2 secondi","Solleva sulle punte il più in alto possibile — 1 secondo in cima","Ripetizioni lente — risponde al tempo sotto tensione"],errors:["Non fare mezze ripetizioni — serve ROM completo","Non rimbalzare nella posizione bassa"]},"Lat machine presa larga":{muscles:["Gran dorsale","Bicipiti"],secondary:["Romboidi","Trapezio inferiore"],steps:["Presa prona larga — circa 1.5 volte la larghezza delle spalle","Busto leggermente indietro — 10-15°. Cosce sotto i cuscinetti","Tira la barra verso la parte alta del petto, gomiti verso il basso e i fianchi","Scendi lentamente fino a estensione completa delle braccia"],errors:["Non sporgersi eccessivamente indietro","Non tirare con le braccia — inizia con la depressione delle scapole","Non fare mezze reps — estensione completa in cima"]},"Rematore al cavo seduto presa stretta":{muscles:["Gran dorsale","Romboidi","Trapezio"],secondary:["Bicipiti","Deltoide posteriore"],steps:["Seduta, piedi sulla pedana, ginocchia leggermente flesse","Busto eretto — non oscillare durante il movimento","Tira verso l'ombelico, portando i gomiti vicini al fianco","Scapole indietro e in basso in fondo, scendi lentamente"],errors:["Non oscillare il busto in avanti e indietro","Non tirare con le braccia — inizia con le scapole","Non arrotondare le spalle in fondo"]},"Rematore con manubrio":{muscles:["Gran dorsale","Romboidi","Trapezio"],secondary:["Bicipiti","Deltoide posteriore"],steps:["Ginocchio e mano stessa parte sulla panca. Schiena piatta e parallela al suolo","Manubrio nell'altra mano, braccio teso verso il basso","Tira verso il fianco — gomito vicino al busto che sale verso il soffitto","Scendi lentamente fino a estensione completa"],errors:["Non ruotare il busto per aiutarti","Non tirare con il bicipite — pensa al gomito verso il soffitto"]},"Face pull al cavo con corda":{muscles:["Deltoide posteriore","Rotatori esterni","Trapezio medio"],secondary:["Romboidi"],steps:["Cavo all'altezza degli occhi, corda con pollici verso l'alto","Tira verso il viso, gomiti alti all'altezza delle orecchie","Rotazione esterna massima in fondo — pollici verso la nuca","Tieni 1 secondo, ritorna controllata"],errors:["Non abbassare i gomiti — devono restare alti","Non usare carichi pesanti — è un esercizio di salute delle spalle","La rotazione esterna finale è la parte più importante"]},"Curl bilanciere":{muscles:["Bicipite brachiale","Brachiale"],secondary:["Brachioradiale"],steps:["In piedi, presa supina larghezza spalle. Gomiti incollati ai fianchi","Curla verso le spalle mantenendo i gomiti fermi","In cima ruota i polsi leggermente verso l'esterno","Scendi lentamente — 2-3 secondi di eccentrica"],errors:["Non oscillare il busto","Non far muovere i gomiti in avanti","Estensione completa in fondo"]},"Curl manubri alternati":{muscles:["Bicipite brachiale","Brachiale"],secondary:["Brachioradiale"],steps:["In piedi, manubri ai fianchi con presa neutra","Curla un braccio alla volta, ruotando il polso verso l'alto durante la salita","In cima il palmo guarda verso la spalla","Scendi lentamente, poi ripeti con l'altro braccio"],errors:["Non oscillare il busto","Non usare slancio","Estensione completa prima della rep successiva"]},"Goblet squat con kettlebell":{muscles:["Quadricipiti","Glutei","Core"],secondary:["Femorali"],steps:["Tieni il kettlebell al petto con entrambe le mani","Piedi larghezza spalle, punte leggermente verso l'esterno","Scendi mantenendo il petto alto","Scendi sotto il parallelo, ginocchia in linea con i piedi"],errors:["Non far collassare le ginocchia verso l'interno","Non alzare i talloni da terra","Non arrotondare la schiena in fondo"]},"Squat al multipower (Smith machine)":{muscles:["Quadricipiti","Glutei","Femorali"],secondary:["Core","Erettori"],steps:["Posiziona i piedi leggermente più avanti rispetto alla barra","Barra sul trapezio, presa larga per stabilità","Scendi sotto il parallelo mantenendo il petto alto","Il multipower guida il percorso — concentrati sulla profondità e la posizione dei piedi"],errors:["Piedi devono essere più avanti rispetto alla barra","Non fare squat parziali — scendi sempre sotto il parallelo","Non lasciare che le ginocchia collassino verso l'interno"]},"Affondi con manubri":{muscles:["Quadricipiti","Glutei"],secondary:["Femorali","Core"],steps:["In piedi, manubri ai fianchi. Fai un passo avanti con una gamba","Scendi verticalmente — ginocchio posteriore verso il suolo senza toccare","Coscia anteriore parallela al suolo, ginocchio anteriore in linea con la punta","Spingi attraverso il tallone anteriore per tornare in piedi"],errors:["Non lasciare che il ginocchio anteriore superi eccessivamente la punta","Non inclinare il busto in avanti","Movimento verticale — non lanciarti in avanti"]},"Hip thrust al multipower":{muscles:["Gluteo grande","Femorali"],secondary:["Core"],steps:["Schiena sulla panca, barra del multipower sul bacino con cuscinetto","Stessa esecuzione del hip thrust classico — piedi larghezza spalle","Il multipower rende il percorso più stabile","Spingi attraverso i talloni, contrai i glutei in cima"],errors:["Non iperestendere la zona lombare in cima","Esecuzione identica al hip thrust classico"]},"Leg extension":{muscles:["Quadricipiti (isolamento)"],secondary:[],steps:["Seduta sulla macchina, schiena appoggiata, ginocchio in linea con il perno","Estendi le gambe fino al lockout completo","Tieni 1 secondo in cima","Scendi lentamente — 3 secondi di eccentrica"],errors:["Non usare slancio","L'eccentrica lenta è dove si costruisce il muscolo"]},"Plank frontale":{muscles:["Core completo","Trasverso addominale"],secondary:["Glutei","Spalle"],steps:["Appoggiata sui gomiti e sulla punta dei piedi","Il corpo forma una linea retta dalla testa ai talloni","Contrai l'addome, glutei in leggera tensione","Respira normalmente durante il hold"],errors:["Non lasciare che i fianchi cedano verso il basso","Non sollevare il sedere verso il soffitto","Non trattenere il respiro"]},"Crunch al cavo":{muscles:["Retto addominale"],secondary:["Obliqui"],steps:["In ginocchio davanti al cavo alto, corda dietro la testa","Porta i gomiti verso le ginocchia contraendo l'addome — non tirare con il collo","La contrazione viene dall'addome, non dalla flessione della schiena","Ritorna lentamente alla posizione iniziale"],errors:["Non usare il collo o le braccia per tirare","Non iperestendere la schiena nella posizione alta"]},"Shoulder press con manubri (seduta)":{muscles:["Deltoide anteriore e medio","Tricipiti"],secondary:["Trapezio","Core"],steps:["Seduta con schiena appoggiata allo schienale, manubri all'altezza delle orecchie","Core braced — non inarcare la schiena durante la spinta","Spingi verso l'alto fino a quasi estensione completa","Scendi lentamente fino ai lati della testa"],errors:["Non inarcare la schiena per compensare — scendi di carico","Non portare i manubri troppo in avanti — devono salire verticali"]},"Alzate laterali cavi":{muscles:["Deltoide medio"],secondary:["Deltoide anteriore","Trapezio superiore"],steps:["Cavo basso al fianco opposto, leggera flessione del gomito fissa","Solleva il braccio lateralmente fino all'altezza della spalla","Polso leggermente più basso del gomito","Scendi lentamente — l'eccentrica è la parte più importante"],errors:["Non usare lo slancio del busto","Non alzare oltre l'altezza delle spalle ripetutamente","Non alzare le spalle verso le orecchie"]},"Alzate frontali manubri":{muscles:["Deltoide anteriore"],secondary:["Deltoide medio","Trapezio"],steps:["In piedi, manubri davanti alle cosce con presa neutra o prona","Solleva un braccio alla volta fino all'altezza delle spalle — non oltre","Braccio quasi teso, leggera flessione del gomito","Scendi lentamente con controllo"],errors:["Non usare lo slancio del busto","Non alzare oltre l'altezza delle spalle"]},"Pushdown al cavo con corda":{muscles:["Tricipite (tutte le teste)"],secondary:["Anconeo"],steps:["Cavo alto con corda. Gomiti incollati ai fianchi — non si muovono","Spingi verso il basso fino a estensione completa","All'estensione, ruota i polsi verso l'esterno","Ritorna controllata fino a circa 90° di flessione"],errors:["Non far muovere i gomiti in avanti durante la spinta","Non fare estensione parziale — lockout completo ogni rep"]},"Skull crusher con manubri":{muscles:["Tricipite (testa lunga)","Tricipite (testa mediale)"],secondary:["Anconeo"],steps:["Sdraiata sulla panca, manubri tesi verso il soffitto con presa neutra","Piega i gomiti portando i manubri verso le orecchie — gomiti fermi e puntati verso il soffitto","Estendi le braccia tornando alla posizione iniziale","I gomiti non si muovono — solo l'avambraccio si piega e si estende"],errors:["Non lasciare che i gomiti vadano verso l'esterno","Non usare slancio per risalire","Inizia con carichi leggeri — è un esercizio tecnico"]},"Hollow body hold":{muscles:["Retto addominale","Trasverso","Flessori anca"],secondary:["Serrато anteriore"],steps:["Sdraiata sulla schiena, braccia tese sopra la testa, gambe tese","Solleva spalle e gambe — la lombare deve restare INCOLLATA al pavimento","Contrai l'addome come se aspettassi un colpo","Per facilitare: piega le ginocchia o alza di più le gambe"],errors:["La lombare che si solleva dal suolo è il segnale di modificare la posizione","Non trattenere il respiro"]},"Leg raise sdraiata":{muscles:["Retto addominale inferiore","Flessori anca"],secondary:["Core"],steps:["Sdraiata, mani sotto i glutei per supporto, gambe tese","Solleva le gambe fino a 90° mantenendo la schiena incollata al suolo","Scendi lentamente fino a quasi toccare il suolo — non poggiare tra le reps","Per facilitare: piega leggermente le ginocchia"],errors:["Non lasciare che la schiena si incarchi durante la discesa","Non usare slancio per sollevare le gambe"]},"Plank laterale":{muscles:["Obliqui","Quadrato dei lombi"],secondary:["Gluteo medio"],steps:["Su un fianco, appoggiata sul gomito, piedi impilati","Solleva i fianchi fino a una linea retta","Contrai il gluteo e il core laterale","Respira normalmente durante il hold"],errors:["Non lasciare che il bacino ruoti","Non abbassare i fianchi","Non trattenere il respiro"]},"Leg swing frontale e laterale":{muscles:["Anca (mobilità)","Flessori anca","Femorali"],secondary:["Glutei","Adduttori"],steps:["Appoggiati a una parete con una mano","Oscillazioni frontali: gamba avanti e indietro — 10 per lato","Oscillazioni laterali: gamba da sinistra a destra davanti al busto — 10 per lato","Aumenta gradualmente l'ampiezza"],errors:["Non forzare l'ampiezza nelle prime reps","La schiena non deve compensare il movimento"]},"Arm circle + band pull-apart leggero":{muscles:["Spalla (riscaldamento)","Rotatori"],secondary:["Trapezio"],steps:["Rotazioni circolari delle braccia — 10 in avanti, 10 indietro ciascun braccio","Poi band pull-apart: elastico davanti a te con braccia tese, apri portando l'elastico al petto","Scapole che si avvicinano in fondo, ritorna lentamente"],errors:["Non fare il movimento di apertura troppo veloce","Non alzare le spalle verso le orecchie"]},"Dead hang passivo alla sbarra":{muscles:["Spalla (decompressione)","Serrато anteriore"],secondary:["Avambracci","Grip"],steps:["Afferrare la sbarra con presa prona","Lasciare andare completamente il peso — nessuna forza attiva","Respira profondo, lascia decomprimere la colonna"],errors:["Non fare forza con le braccia — deve essere passivo","Non oscillare"]},"Rotazioni spalle + band pull-apart":{muscles:["Rotatori","Deltoide posteriore","Trapezio medio"],secondary:["Romboidi"],steps:["Rotazioni circolari delle spalle — avanti e indietro 10 volte","Poi band pull-apart: elastico teso davanti a te con braccia all'altezza delle spalle","Apri le braccia portando l'elastico fino al petto","Ritorna lentamente controllando il movimento"],errors:["Non alzare le spalle verso le orecchie","Non iperestendere i gomiti durante l'apertura"]},"Alzate laterali leggere":{muscles:["Deltoide medio"],secondary:["Trapezio superiore"],steps:["Manubri leggerissimi. In piedi, braccia ai fianchi con leggera flessione del gomito","Solleva le braccia lateralmente fino all'altezza delle spalle","Questo è solo riscaldamento — il peso deve essere minimo","Scendi lentamente"],errors:["Non è un esercizio di forza — è solo attivazione","Non alzare le spalle verso le orecchie"]}};
+
+const weeks=["Sett 1-2","Sett 3-4","Sett 5-6","Sett 7-8"];
+const days=[
+  {label:"Lun",title:"Glutes A",type:"gym",focus:"Glutei · Femorali · ~75 min",sections:[
+    {name:"Riscaldamento",exercises:[{name:"Hip circle + glute bridge bodyweight",sets:"2×15",loads:["BW","BW","BW","BW"],type:"gray"},{name:"Leg swing frontale e laterale",sets:"2×10/lato",loads:["—","—","—","—"],type:"gray"}]},
+    {name:"Esercizi principali",exercises:[{name:"Hip thrust bilanciere",sets:"4×10",loads:["40kg","55kg","65kg","75kg"],type:"pink",note:"Scapole sulla panca, cuscinetto sul bacino. Spingi attraverso i talloni, contrai i glutei in cima 1 secondo."},{name:"Romanian deadlift bilanciere",sets:"4×10",loads:["30kg","40kg","50kg","57.5kg"],type:"pink",note:"Schiena piatta, cerniera sull'anca. Scendi fino a sentire l'allungamento dei femorali, non oltre."}]},
+    {name:"Volume glutei",exercises:[{name:"Leg press piedi alti e larghi",sets:"3×12",loads:["60kg","70kg","80kg","90kg"],type:"pink",note:"Piedi nella parte alta della piattaforma, larghi — attiva glutei invece dei quadricipiti."},{name:"Abductor machine (apertura anche)",sets:"3×15",loads:["30kg","35kg","40kg","45kg"],type:"pink"},{name:"Leg curl sdraiato",sets:"3×12",loads:["25kg","30kg","35kg","40kg"],type:"pink"}]},
+    {name:"Isolamento e finitura",exercises:[{name:"Kickback al cavo basso (gluteo)",sets:"3×12/lato",loads:["10kg","12.5kg","15kg","17.5kg"],type:"pink"},{name:"Calf raise in piedi",sets:"3×15",loads:["40kg","50kg","60kg","70kg"],type:"gray"}]}
+  ],note:"Il hip thrust è l'esercizio più importante della settimana per i glutei. Senti sempre la contrazione — se non la senti, aggiusta la posizione dei piedi.",prog:"Obiettivo 2 mesi: hip thrust 80kg×10, RDL 60kg×10."},
+  {label:"Mar",title:"Upper A",type:"gym",focus:"Schiena · Bicipiti · Rear delt · ~75 min",sections:[
+    {name:"Riscaldamento",exercises:[{name:"Arm circle + band pull-apart leggero",sets:"2×15",loads:["—","—","—","—"],type:"gray"},{name:"Dead hang passivo alla sbarra",sets:"2×20s",loads:["BW","BW","BW","BW"],type:"gray"}]},
+    {name:"Schiena — forza",exercises:[{name:"Lat machine presa larga",sets:"4×10",loads:["30kg","37.5kg","45kg","52.5kg"],type:"pink",note:"Busto leggermente indietro, tira verso la parte alta del petto. Pensa di portare i gomiti verso i fianchi."},{name:"Rematore al cavo seduto presa stretta",sets:"4×10",loads:["25kg","32.5kg","40kg","47.5kg"],type:"pink",note:"Schiena dritta, non oscillare il busto. Tira verso l'ombelico, scapole indietro in fondo."}]},
+    {name:"Schiena — volume",exercises:[{name:"Rematore con manubrio",sets:"3×10/lato",loads:["8kg/m","10kg/m","12kg/m","14kg/m"],type:"pink"},{name:"Face pull al cavo con corda",sets:"3×15",loads:["10kg","12.5kg","15kg","17.5kg"],type:"pink",note:"Gomiti alti, rotazione esterna in fondo. Fondamentale per la salute delle spalle."}]},
+    {name:"Bicipiti",exercises:[{name:"Curl bilanciere",sets:"3×10",loads:["10kg","12.5kg","15kg","17.5kg"],type:"pink"},{name:"Curl manubri alternati",sets:"2×10/lato",loads:["6kg/m","7kg/m","8kg/m","9kg/m"],type:"pink"}]}
+  ],note:"La schiena è già visibilmente sviluppata — priorità al volume e alla connessione mente-muscolo. Non usare slancio: ogni rep deve essere controllata.",prog:"Obiettivo 2 mesi: lat machine 55kg×10, rematore cavo 50kg×10."},
+  {label:"Gio",title:"Glutes B",type:"gym",focus:"Glutei · Quadricipiti · Core · ~75 min",sections:[
+    {name:"Riscaldamento",exercises:[{name:"Goblet squat con kettlebell",sets:"3×10",loads:["8kg","10kg","12kg","14kg"],type:"gray"},{name:"Hip circle + glute bridge bodyweight",sets:"2×10",loads:["BW","BW","BW","BW"],type:"gray"}]},
+    {name:"Esercizi principali",exercises:[{name:"Squat al multipower (Smith machine)",sets:"4×10",loads:["20kg","30kg","40kg","47.5kg"],type:"pink",note:"Piedi leggermente avanti rispetto alla barra, scendi sotto il parallelo. Il multipower aiuta sulla stabilità."},{name:"Affondi con manubri",sets:"3×10/lato",loads:["6kg/m","8kg/m","10kg/m","12kg/m"],type:"pink",note:"Scendi verticalmente, ginocchio anteriore in linea con la punta del piede."}]},
+    {name:"Volume glutei e cosce",exercises:[{name:"Leg press piedi alti e larghi",sets:"3×12",loads:["60kg","70kg","80kg","90kg"],type:"pink"},{name:"Hip thrust al multipower",sets:"3×12",loads:["30kg","40kg","50kg","60kg"],type:"pink",note:"Stessa esecuzione del hip thrust classico — il multipower rende il movimento più stabile."},{name:"Leg extension",sets:"3×15",loads:["20kg","25kg","30kg","35kg"],type:"pink"}]},
+    {name:"Core",exercises:[{name:"Plank frontale",sets:"3×30s",loads:["BW","BW","BW","BW"],type:"gray"},{name:"Crunch al cavo",sets:"3×15",loads:["10kg","12.5kg","15kg","17.5kg"],type:"pink"}]}
+  ],note:"Lo squat al multipower è perfetto per imparare il pattern. Quando la tecnica è solida, si può passare al bilanciere libero.",prog:"Obiettivo 2 mesi: squat multipower 50kg×10, affondi 14kg/m×10."},
+  {label:"Ven",title:"Upper B",type:"gym",focus:"Spalle · Tricipiti · Addominali · ~70 min",sections:[
+    {name:"Riscaldamento",exercises:[{name:"Rotazioni spalle + band pull-apart",sets:"2×15",loads:["—","—","—","—"],type:"gray"},{name:"Alzate laterali leggere",sets:"2×15",loads:["2kg/m","2kg/m","2kg/m","2kg/m"],type:"gray"}]},
+    {name:"Spalle",exercises:[{name:"Shoulder press con manubri (seduta)",sets:"4×10",loads:["6kg/m","8kg/m","10kg/m","12kg/m"],type:"pink",note:"Schiena appoggiata allo schienale, core braced. Spingi verso l'alto senza inarcare la schiena."},{name:"Alzate laterali cavi",sets:"3×15",loads:["4kg","5kg","6kg","7kg"],type:"pink",note:"Movimento lento e controllato. L'eccentrica (discesa) è la parte più importante."},{name:"Alzate frontali manubri",sets:"3×12",loads:["4kg/m","5kg/m","6kg/m","7kg/m"],type:"pink"}]},
+    {name:"Tricipiti",exercises:[{name:"Pushdown al cavo con corda",sets:"3×12",loads:["12kg","15kg","17.5kg","20kg"],type:"pink",note:"Gomiti incollati ai fianchi. Estensione completa in fondo, rotazione polsi verso l'esterno."},{name:"Skull crusher con manubri",sets:"3×10",loads:["4kg/m","5kg/m","6kg/m","7kg/m"],type:"pink",note:"Sdraiata, abbassa i manubri verso le orecchie piegando i gomiti. Gomiti fermi e puntati verso il soffitto."}]},
+    {name:"Addominali",exercises:[{name:"Hollow body hold",sets:"3×25s",loads:["BW","BW","BW","BW"],type:"gray",note:"Lombare incollata al suolo, gambe tese a 20-30cm da terra. Se la schiena si alza, piega le ginocchia."},{name:"Leg raise sdraiata",sets:"3×12",loads:["BW","BW","BW","BW"],type:"gray"},{name:"Plank laterale",sets:"2×25s/lato",loads:["BW","BW","BW","BW"],type:"gray"}]}
+  ],note:"Le spalle rispondono bene al volume con carichi moderati. Non aumentare il peso se la forma si compromette.",prog:"Obiettivo 2 mesi: shoulder press 14kg/m×10, pushdown 22.5kg×12."}
 ];
 
-let sd=0,sw=0;
+let selDay=0,selWeek=0,pendingDeleteId=null;
+function sKey(d,w){return`c_d${d}_w${w}`;}
+function hKey(){return'cwh';}
+function getSess(d,w){try{const x=localStorage.getItem(sKey(d,w));return x?JSON.parse(x):{}}catch(e){return{};}}
+function saveSess(d,w,data){try{localStorage.setItem(sKey(d,w),JSON.stringify(data));}catch(e){}}
+function getHist(){try{const x=localStorage.getItem(hKey());return x?JSON.parse(x):[]}catch(e){return[];}}
+function saveHist(h){try{localStorage.setItem(hKey(),JSON.stringify(h));}catch(e){}}
 
-function renderGrid(){
-  document.getElementById('dg').innerHTML=D.map((d,i)=>`
-    <div class="dpill ${i===sd?'active':''}" onclick="sel(${i})">
-      <div class="dl">${d.label}</div>
-      <div class="dn">${d.short}</div>
-    </div>`).join('');
+function showPage(p){
+  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(el=>el.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  const idx={scheda:0,tracker:1,history:2}[p];
+  document.querySelectorAll('.nav-tab')[idx].classList.add('active');
+  if(p==='tracker')renderTracker();
+  if(p==='history')renderHistory();
 }
-
-function renderDetail(){
-  const d=D[sd],w=sw;
-  let h=`<div class="dhead"><div><div class="dtitle">${d.label} — ${d.short}</div><div class="dfocus">${d.focus}</div></div><span class="badge badge-gym">${d.badge}</span></div>`;
-  h+=`<div class="wtabs">${W.map((wk,i)=>`<button class="wtab ${i===w?'active':''}" onclick="selW(${i})">${wk}</button>`).join('')}</div>`;
-  h+=`<div style="display:grid;grid-template-columns:1fr auto auto;gap:8px;padding:4px 0 7px;border-bottom:0.5px solid var(--color-border-tertiary);">
-    <span style="font-size:11px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Esercizio</span>
-    <span style="font-size:11px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Serie×Reps</span>
-    <span style="font-size:11px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:0.05em;text-align:right;">Carico</span>
-  </div>`;
-  d.sections.forEach(s=>{
-    h+=`<div class="slabel">${s.name}</div>`;
-    s.exercises.forEach(e=>{
-      h+=`<div class="exrow">
-        <div class="exname">${e.name}</div>
-        <div class="exsets">${e.sets}</div>
-        <div class="exload ${e.ltype==='pink'?'load-pink':'load-gray'}">${e.loads[w]}</div>
-        ${e.note?`<div class="exnote">${e.note}</div>`:''}
-      </div>`;
-    });
-  });
-  if(d.note)h+=`<div class="notebox">${d.note}</div>`;
-  if(d.prog)h+=`<div class="progbox">${d.prog}</div>`;
-  document.getElementById('dp').innerHTML=h;
+function isDayDone(di,wi){const s=getSess(di,wi);const d=days[di];let tot=0,done=0;d.sections.forEach(sec=>sec.exercises.forEach(ex=>{tot++;if(s[ex.name])done++;}));return tot>0&&done===tot;}
+function renderWeeks(){document.getElementById('weekRow').innerHTML=weeks.map((w,i)=>`<button class="wtab ${i===selWeek?'active':''}" onclick="setWeek(${i})">${w}</button>`).join('');}
+function renderDays(){document.getElementById('dayRow').innerHTML=days.map((d,i)=>{const done=isDayDone(i,selWeek);return`<div class="dpill ${i===selDay?'active':''}" onclick="setDay(${i})">${done?'<div class="done-dot"></div>':''}<div class="dl">${d.label}</div><div class="dn">${d.title}</div></div>`;}).join('');}
+function checkSVG(on){return on?`<svg viewBox="0 0 13 13" fill="none"><polyline points="2,7 5,10 11,3" stroke="#f472b6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`:`<svg viewBox="0 0 13 13" fill="none"></svg>`;}
+function buildCard(ex,w,session){
+  const lc=ex.type==='pink'?'pink':'';const hi=!!EI[ex.name];const done=!!session[ex.name];const safeN=ex.name.replace(/'/g,"\\'");
+  const chips=ex.loads.map((l,i)=>`<div class="lchip ${lc} ${i===w?'active-week':''}">${i===w?'<span>*</span>':`<span>S${i*2+1}-${i*2+2}</span>`}${l}</div>`).join('');
+  return`<div class="ex-card ${done?'completed':''}"><div class="ex-top"><button class="ex-name-btn" ${hi?`onclick="openModal('${safeN}')"`:''}>${hi?'<span class="info-dot">i</span>':''}<span>${ex.name}</span></button><div class="ex-right"><div class="ex-sets">${ex.sets}</div><div class="check-btn ${done?'done':''}" onclick="togEx('${safeN}')">${checkSVG(done)}</div></div></div><div class="loads-row">${chips}</div>${ex.note?`<div class="ex-note-inline">${ex.note}</div>`:''}</div>`;
 }
-
-function sel(i){sd=i;renderGrid();renderDetail();}
-function selW(i){sw=i;renderDetail();}
-renderGrid();renderDetail();
+function renderContent(){
+  const d=days[selDay],w=selWeek,sess=getSess(selDay,selWeek);
+  let html=`<div class="day-hdr"><div class="day-hdr-top"><div><h2>${d.label} — ${d.title}</h2><div class="focus">${d.focus}</div></div><span class="tbadge">Palestra</span></div></div>`;
+  d.sections.forEach(sec=>{html+=`<div class="slabel">${sec.name}</div>`;sec.exercises.forEach(ex=>{html+=buildCard(ex,w,sess);});});
+  if(d.note)html+=`<div class="note-box">${d.note}</div>`;
+  if(d.prog)html+=`<div class="prog-box">${d.prog}</div>`;
+  document.getElementById('content').innerHTML=html;
+}
+function renderTracker(){
+  const d=days[selDay],w=selWeek,sess=getSess(selDay,selWeek);
+  document.getElementById('tracker-subtitle').textContent=`${d.label} · ${d.title} · ${weeks[w]}`;
+  let html='';
+  d.sections.forEach(sec=>{html+=`<div class="slabel">${sec.name}</div>`;sec.exercises.forEach(ex=>{html+=buildCard(ex,w,sess);});});
+  const total=d.sections.reduce((a,s)=>a+s.exercises.length,0);
+  const allDone=Object.keys(sess).length===total;
+  html+=`<button class="save-btn ${allDone?'ready':''}" onclick="askSave()">${allDone?'Sessione completa — salva nello storico':'Salva sessione nello storico'}</button>`;
+  document.getElementById('tracker-content').innerHTML=html;
+}
+function togEx(exName){
+  const sess=getSess(selDay,selWeek);
+  if(sess[exName])delete sess[exName];else sess[exName]=true;
+  saveSess(selDay,selWeek,sess);
+  const tA=document.getElementById('page-tracker').classList.contains('active');
+  const sA=document.getElementById('page-scheda').classList.contains('active');
+  if(tA)renderTracker();if(sA)renderContent();renderDays();
+}
+function setWeek(i){selWeek=i;renderWeeks();renderDays();renderContent();}
+function setDay(i){selDay=i;renderDays();renderContent();}
+function askSave(){
+  const d=days[selDay],w=selWeek,sess=getSess(selDay,selWeek);
+  const done=Object.keys(sess).length;const total=d.sections.reduce((a,s)=>a+s.exercises.length,0);
+  document.getElementById('confirmTitle').textContent='Salva sessione';
+  document.getElementById('confirmSub').textContent=`${d.label} — ${d.title} · ${weeks[w]} · ${done} su ${total} esercizi completati. Vuoi salvare questa sessione nello storico?`;
+  document.getElementById('confirmCancel').onclick=closeConfirm;
+  document.getElementById('confirmOk').onclick=doSave;
+  document.getElementById('confirmOverlay').classList.add('open');
+}
+function closeConfirm(){document.getElementById('confirmOverlay').classList.remove('open');}
+function doSave(){
+  closeConfirm();
+  const d=days[selDay],w=selWeek,sess=getSess(selDay,selWeek);const hist=getHist();
+  const completed=[];d.sections.forEach(sec=>sec.exercises.forEach(ex=>{if(sess[ex.name])completed.push(ex.name);}));
+  const total=d.sections.reduce((a,s)=>a+s.exercises.length,0);
+  hist.unshift({id:Date.now(),date:new Date().toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long'}),time:new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'}),dayTitle:`${d.label} — ${d.title}`,week:weeks[w],completed,total});
+  if(hist.length>60)hist.pop();saveHist(hist);showPage('history');
+}
+function askDelete(id){pendingDeleteId=id;document.getElementById('deleteOk').onclick=doDelete;document.getElementById('deleteOverlay').classList.add('open');}
+function closeDeleteOverlay(){document.getElementById('deleteOverlay').classList.remove('open');pendingDeleteId=null;}
+function doDelete(){if(pendingDeleteId===null)return;const hist=getHist().filter(e=>e.id!==pendingDeleteId);saveHist(hist);closeDeleteOverlay();renderHistory();}
+function renderHistory(){
+  const hist=getHist();const el=document.getElementById('history-content');
+  if(!hist.length){el.innerHTML=`<div class="history-empty">Nessuna sessione ancora.<br><br>Completa il tuo primo allenamento e salvalo dal Tracker.</div>`;return;}
+  let html=hist.map((e,i)=>`<div class="hist-session"><div class="hist-session-hdr"><div class="hist-session-hdr-left" onclick="togHist(${i})"><div class="hist-session-title">${e.dayTitle}</div><div class="hist-session-date">${e.date} · ${e.time} · ${e.week} · ${e.completed.length}/${e.total}</div></div><span class="hist-arrow" id="ha-${i}" onclick="togHist(${i})">›</span><button class="del-session-btn" onclick="askDelete(${e.id})">Rimuovi</button></div><div class="hist-session-body" id="hb-${i}">${e.completed.map(n=>`<div class="hist-ex"><span class="hist-ex-name">${n}</span><span class="hist-ex-status">fatto</span></div>`).join('')}</div></div>`).join('');
+  if(hist.length>1)html+=`<button class="clear-all-btn" onclick="askClearAll()">Cancella tutto lo storico</button>`;
+  el.innerHTML=html;
+}
+function togHist(i){const b=document.getElementById('hb-'+i),a=document.getElementById('ha-'+i);b.classList.toggle('open');a.textContent=b.classList.contains('open')?'˅':'›';}
+function askClearAll(){
+  document.getElementById('confirmTitle').textContent='Cancella storico';
+  document.getElementById('confirmSub').textContent='Vuoi cancellare tutto lo storico? Tutte le sessioni salvate saranno rimosse definitivamente.';
+  document.getElementById('confirmCancel').onclick=closeConfirm;
+  document.getElementById('confirmOk').onclick=()=>{closeConfirm();try{localStorage.removeItem(hKey());}catch(e){}renderHistory();};
+  document.getElementById('confirmOverlay').classList.add('open');
+}
+function openModal(name){
+  const info=EI[name];if(!info)return;
+  document.getElementById('modalTitle').textContent=name;
+  document.getElementById('modalMuscles').innerHTML=info.muscles.map(m=>`<span class="muscle-tag muscle-primary">${m}</span>`).join('')+(info.secondary||[]).map(m=>`<span class="muscle-tag muscle-secondary">${m}</span>`).join('');
+  let body=`<div class="modal-section"><div class="modal-section-title">Come eseguirlo</div><div class="step-list">${info.steps.map((s,i)=>`<div class="step-item"><div class="step-num">${i+1}</div><div class="step-text">${s}</div></div>`).join('')}</div></div>`;
+  if(info.errors&&info.errors.length)body+=`<div class="modal-section"><div class="modal-section-title">Errori comuni da evitare</div><div class="error-list">${info.errors.map(e=>`<div class="error-item"><div class="error-dot"></div><span>${e}</span></div>`).join('')}</div></div>`;
+  document.getElementById('modalBody').innerHTML=body;
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(e){if(e.target===document.getElementById('modalOverlay'))closeModalDirect();}
+function closeModalDirect(){document.getElementById('modalOverlay').classList.remove('open');document.body.style.overflow='';}
+renderWeeks();renderDays();renderContent();
 </script>
+</body>
+</html>
